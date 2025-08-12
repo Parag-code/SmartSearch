@@ -16,7 +16,7 @@ import os
 # Load environment variables from .env (for local dev)
 load_dotenv()
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY").strip()
 OPENAI_ORG_ID = os.getenv("OPENAI_ORG_ID")
 OPENAI_PROJECT_ID = os.getenv("OPENAI_PROJECT_ID")
 
@@ -207,3 +207,4 @@ def parse_query():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
