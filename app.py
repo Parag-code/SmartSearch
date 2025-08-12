@@ -9,17 +9,27 @@ from openai import OpenAI
 
 app = Flask(__name__)
 
+
 from dotenv import load_dotenv
 import os
 
-# Load environment variables from .env
+# Load environment variables from .env (for local dev)
 load_dotenv()
+
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_ORG_ID = os.getenv("OPENAI_ORG_ID")
+OPENAI_PROJECT_ID = os.getenv("OPENAI_PROJECT_ID")
+
 if not OPENAI_API_KEY:
-    raise ValueError("❌ OPENAI_API_KEY not found in .env file")
+    raise ValueError("❌ OPENAI_API_KEY not found. Please set it in environment variables or .env file.")
 
-client = OpenAI(api_key=OPENAI_API_KEY)
-
+# Initialize OpenAI client
+# This supports both normal keys (sk-...) and project keys (sk-proj-...)
+client = OpenAI(
+    api_key=OPENAI_API_KEY,
+    organization=OPENAI_ORG_ID if OPENAI_ORG_ID else None,
+    project=OPENAI_PROJECT_ID if OPENAI_PROJECT_ID else None
+)
 def build_prompt(query):
     return f"""
 You are a flight booking assistant.
