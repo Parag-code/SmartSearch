@@ -35,8 +35,8 @@ def build_prompt(query):
 You are a flight booking assistant.
 
 Extract and return only JSON with the following keys:
-- from: departure city
-- to: arrival city
+- from: departure airport IATA code (3 letters, e.g., DEL for Delhi)
+- to: arrival airport IATA code (3 letters, e.g., DXB for Dubai)
 - depdate: departure date (natural format like "after 5 days" allowed)
 - retdate: return date (optional)
 - adults: number of adults (default: 1)
@@ -45,11 +45,14 @@ Extract and return only JSON with the following keys:
 - cabin: cabin class like economy, business (default: economy)
 - airline_include: preferred airline if mentioned (e.g., "by Indigo")
 
-Only assign a value if it is clearly mentioned in the query. 
-If a field is missing, set its value to null or "Not Provided", except:
-- Set "adults" to 1 by default
-- Set "children" and "infants" to 0 by default
-- Set "cabin" to "economy" by default
+Rules:
+- If the user gives a city or airport name, convert it to its **IATA airport code**.
+- Always choose the main passenger airport for that location.
+- Only assign a value if it is clearly mentioned in the query.
+- If a field is missing, set its value to null or "Not Provided", except:
+  * Set "adults" to 1 by default
+  * Set "children" and "infants" to 0 by default
+  * Set "cabin" to "economy" by default
 
 Return valid JSON only. Do not explain anything.
 
@@ -207,4 +210,5 @@ def parse_query():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
