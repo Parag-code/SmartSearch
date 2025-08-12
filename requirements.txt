@@ -1,0 +1,6 @@
+Flask==2.3.3
+gunicorn==21.2.0
+parsedatetime==2.6
+python-dateutil==2.8.2
+ollama==0.1.7
+python-dotenv==1.0.1
