@@ -130,9 +130,9 @@ def parse_query():
         # Build the prompt
         prompt = build_prompt(user_query)
 
-        # Call GPT-4o
+        # Call GPT-4o-mini
         response = client.chat.completions.create(
-            model="gpt-4o",
+            model="gpt-4o-mini",
             messages=[
                 {"role": "user", "content": prompt}
             ],
@@ -225,3 +225,4 @@ print(f"Last 10 chars: {OPENAI_API_KEY[-10:]}")
 
 if __name__ == '__main__':
     app.run(debug=True)
+
