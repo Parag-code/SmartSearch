@@ -30,24 +30,34 @@ client = OpenAI(
     organization=OPENAI_ORG_ID if OPENAI_ORG_ID else None,
     project=OPENAI_PROJECT_ID if OPENAI_PROJECT_ID else None
 )
+
 def build_prompt(query):
     return f"""
-You are a flight booking assistant.
+You are a multilingual flight booking assistant.
+
+The current date is {datetime.now().strftime('%Y-%m-%d')}.
+The user query may be in Hindi, English, or a mix of both.
+
+You must:
+- Understand Hindi date/time phrases (e.g., "कल", "परसों", "5 दिन बाद", "अगला सोमवार", "अगले महीने") the same as their English equivalents ("tomorrow", "day after tomorrow", "after 5 days", "next Monday", "next month").
+- Always calculate `depdate` relative to today's date.
+- If `retdate` is a relative expression (e.g., "10 दिन बाद", "after 10 days"), calculate it relative to the `depdate` instead of today's date.
+- Return all dates in YYYY-MM-DD format in the JSON output.
+- Handle both Hindi and English city/airport names and convert them to their **IATA 3-letter codes**.
+- If a location has multiple airports, choose the primary international passenger airport.
 
 Extract and return only JSON with the following keys:
 - from: departure airport IATA code (3 letters, e.g., DEL for Delhi)
 - to: arrival airport IATA code (3 letters, e.g., DXB for Dubai)
-- depdate: departure date (natural format like "after 5 days" allowed)
-- retdate: return date (optional)
+- depdate: departure date in YYYY-MM-DD format
+- retdate: return date in YYYY-MM-DD format (optional)
 - adults: number of adults (default: 1)
 - children: number of children (default: 0)
 - infants: number of infants (default: 0)
 - cabin: cabin class like economy, business (default: economy)
-- airline_include: preferred airline if mentioned (e.g., "by Indigo")
+- airline_include: preferred airline if mentioned (e.g., "by Indigo", "इंडिगो से")
 
 Rules:
-- If the user gives a city or airport name, convert it to its **IATA airport code**.
-- Always choose the main passenger airport for that location.
 - Only assign a value if it is clearly mentioned in the query.
 - If a field is missing, set its value to null or "Not Provided", except:
   * Set "adults" to 1 by default
@@ -207,8 +217,11 @@ def parse_query():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+    
+print(f"Loaded key length: {len(OPENAI_API_KEY)}")
+print(f"First 10 chars: {OPENAI_API_KEY[:10]}")
+print(f"Last 10 chars: {OPENAI_API_KEY[-10:]}")
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
